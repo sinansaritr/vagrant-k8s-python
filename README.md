@@ -51,7 +51,7 @@ docker tag myflask:latest $container_registry/myflask:latest
 
 docker push $container_registry/myflask:latest
 
-## PS: Replace "$container_registry" with your container registry in command above and in app-deployment.yaml file below.
+### PS: Replace "$container_registry" with your container registry in command above and in app-deployment.yaml file below.
 
 
 ### Run app and db onto k8s cluster
