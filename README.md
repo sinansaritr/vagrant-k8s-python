@@ -1,6 +1,6 @@
 # Vagrant-k8s-python_flask
 
-One Paragraph of project description goes here
+This repo helps to create k8s cluster via vagrant/ansible and install flask app with mysql DB.
 
 ## Getting Started
 
@@ -8,80 +8,48 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
+Vagrant
+Virtual Box
+kubectl
+docker
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
+## Download repo
 
-Say what the step will be
+mkdir demo
+cd demo 
+git clone https://github.com/sinansaritr/vagrant-k8s-python.git
 
-```
-Give the example
-```
+## Install k8s cluster via vagrant
 
-And repeat
+cd demo/vagrant-k8s-python
+vagrant up
 
-```
-until finished
-```
+## Copy the Kubernetes config to your local home .kube dir
+scp -P 2222 vagrant@127.0.0.1:/home/vagrant/.kube/config ~/.kube/config
+vagrant@127.0.0.1's password: vagrant
 
-End with an example of getting some data out of the system or using it for a little demo
+kubectl cluster-info
 
-## Running the tests
+## Dockerize flask app
 
-Explain how to run the automated tests for this system
+cd demo/vagrant-k8s-python/app
+docker build -f Dockerfile -t myflask:latest .
+docker tag myflask:latest sinansaritr/myflask:latest
+docker push sinansaritr/myflask:latest
 
-### Break down into end to end tests
+## Run app and db onto k8s cluster
 
-Explain what these tests test and why
+cd demo/vagrant-k8s-python/k8s
 
-```
-Give an example
-```
+kubectl create -f db-deployment.yml
+kubectl create -f app-deployment.yml
 
-### And coding style tests
+## How to Connect App
 
-Explain what these tests test and why
+kubectl get nodes -o wide  ## Get IP of k8s node since we use NodePort to expose service
 
-```
-Give an example
-```
+## Connect Flask app via browser
 
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+http://node_ip:30000
