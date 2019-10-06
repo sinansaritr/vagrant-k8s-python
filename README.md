@@ -18,15 +18,19 @@ docker
 ## Download repo
 
 mkdir demo
+
 cd demo 
+
 git clone https://github.com/sinansaritr/vagrant-k8s-python.git
 
 ## Install k8s cluster via vagrant
 
 cd demo/vagrant-k8s-python
+
 vagrant up
 
 ## Copy the Kubernetes config to your local home .kube dir
+
 scp -P 2222 vagrant@127.0.0.1:/home/vagrant/.kube/config ~/.kube/config
 vagrant@127.0.0.1's password: vagrant
 
@@ -35,8 +39,11 @@ kubectl cluster-info
 ## Dockerize flask app
 
 cd demo/vagrant-k8s-python/app
+
 docker build -f Dockerfile -t myflask:latest .
+
 docker tag myflask:latest sinansaritr/myflask:latest
+
 docker push sinansaritr/myflask:latest
 
 ## Run app and db onto k8s cluster
@@ -44,6 +51,7 @@ docker push sinansaritr/myflask:latest
 cd demo/vagrant-k8s-python/k8s
 
 kubectl create -f db-deployment.yml
+
 kubectl create -f app-deployment.yml
 
 ## How to Connect App
